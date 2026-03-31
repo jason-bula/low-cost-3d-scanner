@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CalibrationWindow</class>
+ <widget class="QDialog" name="CalibrationWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>760</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Mount calibration</string>
+  </property>
+  <widget class="QWidget" name="">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="contentsMargins">
+     <number>12</number>
+    </property>
+    <property name="spacing">
+     <number>10</number>
+    </property>
+
+    <!-- ══ Input PCAP ══ -->
+    <item>
+     <widget class="QGroupBox" name="groupInput">
+      <property name="title">
+       <string>Input data</string>
+      </property>
+      <layout class="QGridLayout" name="layoutInput">
+       <item row="0" column="0">
+        <widget class="QLabel">
+         <property name="text"><string>PCAP file</string></property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="3">
+        <widget class="QLineEdit" name="editPcap">
+         <property name="text"><string>raw/scan_360_6min.pcap</string></property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="btnBrowsePcap">
+         <property name="text"><string>...</string></property>
+         <property name="maximumWidth"><number>32</number></property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QPushButton" name="btnRecordPcap">
+         <property name="text"><string>Record PCAP</string></property>
+         <property name="toolTip"><string>Slow 360° scan + PCAP recording for calibration</string></property>
+         <property name="styleSheet">
+          <string>QPushButton { background-color: #2196F3; color: white; font-weight: bold; border-radius: 4px; padding: 4px 8px; }
+QPushButton:hover { background-color: #1976D2; }
+QPushButton:disabled { background-color: #9E9E9E; }</string>
+         </property>
+        </widget>
+       </item>
+
+       <item row="1" column="0">
+        <widget class="QLabel">
+         <property name="text"><string>Total angle (°)</string></property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="spinTotalAngle">
+         <property name="minimum"><double>1.0</double></property>
+         <property name="maximum"><double>720.0</double></property>
+         <property name="value"><double>360.0</double></property>
+         <property name="decimals"><number>4</number></property>
+         <property name="suffix"><string> °</string></property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget name="labelMinDist" class="QLabel">
+         <property name="text"><string>Min dist (m)</string></property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QDoubleSpinBox" name="spinMinDist">
+         <property name="minimum"><double>0.0</double></property>
+         <property name="maximum"><double>100.0</double></property>
+         <property name="value"><double>2.0</double></property>
+         <property name="decimals"><number>1</number></property>
+         <property name="suffix"><string> m</string></property>
+        </widget>
+       </item>
+
+       <item row="2" column="0">
+        <widget class="QLabel">
+         <property name="text"><string>LiDAR IP</string></property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="editIP">
+         <property name="text"><string>192.168.20.13</string></property>
+         <property name="maximumWidth"><number>140</number></property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel">
+         <property name="text"><string>Subsample</string></property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QSpinBox" name="spinSubsample">
+         <property name="minimum"><number>1</number></property>
+         <property name="maximum"><number>100</number></property>
+         <property name="value"><number>10</number></property>
+         <property name="prefix"><string>1/</string></property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- ══ Output ══ -->
+    <item>
+     <widget class="QGroupBox" name="groupOutput">
+      <property name="title">
+       <string>Output</string>
+      </property>
+      <layout class="QHBoxLayout" name="layoutOutput">
+       <item>
+        <widget class="QLabel">
+         <property name="text"><string>Directory</string></property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="editOutputDir">
+         <property name="text"><string>scans</string></property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnBrowseOutput">
+         <property name="text"><string>...</string></property>
+         <property name="maximumWidth"><number>32</number></property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- ══ Bounds ══ -->
+    <item>
+     <widget class="QGroupBox" name="groupBounds">
+      <property name="title">
+       <string>Optimization bounds</string>
+      </property>
+      <layout class="QHBoxLayout" name="layoutBounds">
+       <item>
+        <widget class="QLabel">
+         <property name="text"><string>Max translation (mm)</string></property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="spinMaxShift">
+         <property name="minimum"><double>1.0</double></property>
+         <property name="maximum"><double>500.0</double></property>
+         <property name="value"><double>20.0</double></property>
+         <property name="decimals"><number>1</number></property>
+         <property name="suffix"><string> mm</string></property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- ══ Initial values (warm start) ══ -->
+    <item>
+     <widget class="QGroupBox" name="groupInit">
+      <property name="title">
+       <string>Initial values (warm start)</string>
+      </property>
+      <layout class="QGridLayout" name="layoutInit">
+       <item row="0" column="0">
+        <widget class="QLabel">
+         <property name="text"><string>Roll (°)</string></property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="spinInitRoll">
+         <property name="minimum"><double>-180.0</double></property>
+         <property name="maximum"><double>180.0</double></property>
+         <property name="value"><double>0.0</double></property>
+         <property name="decimals"><number>4</number></property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel">
+         <property name="text"><string>Pitch (°)</string></property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QDoubleSpinBox" name="spinInitPitch">
+         <property name="minimum"><double>-180.0</double></property>
+         <property name="maximum"><double>180.0</double></property>
+         <property name="value"><double>0.0</double></property>
+         <property name="decimals"><number>4</number></property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLabel">
+         <property name="text"><string>Yaw (°)</string></property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QDoubleSpinBox" name="spinInitYaw">
+         <property name="minimum"><double>-180.0</double></property>
+         <property name="maximum"><double>180.0</double></property>
+         <property name="value"><double>0.0</double></property>
+         <property name="decimals"><number>4</number></property>
+        </widget>
+       </item>
+
+       <item row="1" column="0">
+        <widget class="QLabel">
+         <property name="text"><string>tx (mm)</string></property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="spinInitTx">
+         <property name="minimum"><double>-500.0</double></property>
+         <property name="maximum"><double>500.0</double></property>
+         <property name="value"><double>0.0</double></property>
+         <property name="decimals"><number>2</number></property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel">
+         <property name="text"><string>ty (mm)</string></property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QDoubleSpinBox" name="spinInitTy">
+         <property name="minimum"><double>-500.0</double></property>
+         <property name="maximum"><double>500.0</double></property>
+         <property name="value"><double>0.0</double></property>
+         <property name="decimals"><number>2</number></property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QLabel">
+         <property name="text"><string>tz (mm)</string></property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QDoubleSpinBox" name="spinInitTz">
+         <property name="minimum"><double>-500.0</double></property>
+         <property name="maximum"><double>500.0</double></property>
+         <property name="value"><double>0.0</double></property>
+         <property name="decimals"><number>2</number></property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- ══ Method selection ══ -->
+    <item>
+     <widget class="QGroupBox" name="groupMethod">
+      <property name="title">
+       <string>Optimization method</string>
+      </property>
+      <layout class="QVBoxLayout" name="layoutMethod">
+       <item>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QRadioButton" name="radioV1">
+           <property name="text"><string>v1 — Front/back distance (cold start OK)</string></property>
+           <property name="checked"><bool>true</bool></property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QRadioButton" name="radioV2">
+           <property name="text"><string>v2 — Local PCA roughness (~27 min)</string></property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QRadioButton" name="radioV3">
+           <property name="text"><string>v3 — Point-to-plane RANSAC</string></property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QRadioButton" name="radioV4">
+           <property name="text"><string>v4 — Voxel density</string></property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QRadioButton" name="radioV5">
+           <property name="text"><string>v5 — ICP point-to-plane (~3 s)</string></property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- ══ Workflow presets ══ -->
+    <item>
+     <layout class="QHBoxLayout" name="layoutPresets">
+      <item>
+       <widget class="QLabel">
+        <property name="text"><string>Workflow:</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnWorkflowFull">
+        <property name="text"><string>Full (v1 + v2)</string></property>
+        <property name="toolTip"><string>v1 cold start then v2 warm start (~30 min)</string></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnWorkflowQuick">
+        <property name="text"><string>Quick (v1 + v5)</string></property>
+        <property name="toolTip"><string>v1 cold start then v5 warm start (~2 min)</string></property>
+       </widget>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation"><enum>Qt::Horizontal</enum></property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+
+    <!-- ══ Controls ══ -->
+    <item>
+     <layout class="QHBoxLayout" name="layoutControls">
+      <item>
+       <widget class="QPushButton" name="btnRun">
+        <property name="text"><string>Run calibration</string></property>
+        <property name="minimumHeight"><number>44</number></property>
+        <property name="styleSheet">
+         <string>QPushButton { background-color: #FF9800; color: white; font-size: 14px; font-weight: bold; border-radius: 6px; }
+QPushButton:hover { background-color: #F57C00; }
+QPushButton:disabled { background-color: #9E9E9E; }</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnStop">
+        <property name="text"><string>Stop</string></property>
+        <property name="minimumHeight"><number>44</number></property>
+        <property name="enabled"><bool>false</bool></property>
+        <property name="styleSheet">
+         <string>QPushButton { background-color: #F44336; color: white; font-size: 14px; font-weight: bold; border-radius: 6px; }
+QPushButton:hover { background-color: #E53935; }
+QPushButton:disabled { background-color: #9E9E9E; }</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+
+    <!-- ══ Progress ══ -->
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value"><number>0</number></property>
+      <property name="textVisible"><bool>true</bool></property>
+     </widget>
+    </item>
+
+    <!-- ══ Status ══ -->
+    <item>
+     <widget class="QLabel" name="labelStatus">
+      <property name="text"><string>Ready</string></property>
+      <property name="styleSheet"><string>color: #757575; font-style: italic;</string></property>
+     </widget>
+    </item>
+
+    <!-- ══ Results ══ -->
+    <item>
+     <widget class="QGroupBox" name="groupResults">
+      <property name="title">
+       <string>Results</string>
+      </property>
+      <layout class="QGridLayout" name="layoutResults">
+       <item row="0" column="0">
+        <widget class="QLabel">
+         <property name="text"><string>Roll</string></property>
+         <property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="labelResRoll">
+         <property name="text"><string>—</string></property>
+         <property name="styleSheet"><string>font-weight: bold; font-size: 13px;</string></property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel">
+         <property name="text"><string>Pitch</string></property>
+         <property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="labelResPitch">
+         <property name="text"><string>—</string></property>
+         <property name="styleSheet"><string>font-weight: bold; font-size: 13px;</string></property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLabel">
+         <property name="text"><string>Yaw</string></property>
+         <property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QLabel" name="labelResYaw">
+         <property name="text"><string>—</string></property>
+         <property name="styleSheet"><string>font-weight: bold; font-size: 13px;</string></property>
+        </widget>
+       </item>
+
+       <item row="1" column="0">
+        <widget class="QLabel">
+         <property name="text"><string>tx</string></property>
+         <property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="labelResTx">
+         <property name="text"><string>—</string></property>
+         <property name="styleSheet"><string>font-weight: bold; font-size: 13px;</string></property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel">
+         <property name="text"><string>ty</string></property>
+         <property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLabel" name="labelResTy">
+         <property name="text"><string>—</string></property>
+         <property name="styleSheet"><string>font-weight: bold; font-size: 13px;</string></property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QLabel">
+         <property name="text"><string>tz</string></property>
+         <property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QLabel" name="labelResTz">
+         <property name="text"><string>—</string></property>
+         <property name="styleSheet"><string>font-weight: bold; font-size: 13px;</string></property>
+        </widget>
+       </item>
+
+       <item row="2" column="0">
+        <widget class="QLabel">
+         <property name="text"><string>Improvement</string></property>
+         <property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property>
+        </widget>
+       </item>
+       <item row="2" column="1" colspan="2">
+        <widget class="QLabel" name="labelResImprovement">
+         <property name="text"><string>—</string></property>
+         <property name="styleSheet"><string>font-weight: bold; font-size: 13px; color: #4CAF50;</string></property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QLabel">
+         <property name="text"><string>File</string></property>
+         <property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property>
+        </widget>
+       </item>
+       <item row="2" column="4" colspan="2">
+        <widget class="QLabel" name="labelResFile">
+         <property name="text"><string>—</string></property>
+         <property name="styleSheet"><string>font-weight: bold; font-size: 11px;</string></property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+
+    <!-- ══ Log ══ -->
+    <item>
+     <widget class="QPlainTextEdit" name="textLog">
+      <property name="readOnly"><bool>true</bool></property>
+      <property name="minimumHeight"><number>120</number></property>
+      <property name="styleSheet">
+       <string>QPlainTextEdit { background-color: #1E1E1E; color: #D4D4D4; font-family: monospace; font-size: 11px; }</string>
+      </property>
+      <property name="placeholderText"><string>Optimization output...</string></property>
+     </widget>
+    </item>
+
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
