@@ -4,9 +4,15 @@ Low-cost terrestrial 3D scanner: Hesai Pandar 40P LiDAR mounted on a SimpleFOC-d
 
 ![3D scan example](figures/renens.png)
 
+![Scanner in action: live point cloud and rotating gimbal](figures/system.gif)
+
 ## CAD
 
-The mechanical assembly is available in [`CAD/system.stl`](CAD/system.stl).
+The mechanical assembly is available in [`CAD/system.stl`](CAD/system.stl) (GitHub renders it as an interactive 3D view).
+
+<p align="center">
+  <img src="figures/cad.png" alt="CAD preview of the scanner assembly" width="320">
+</p>
 
 ## Structure
 
@@ -21,16 +27,23 @@ replay_scan.py  Replay PCAP → PCD
 
 ## Quick start
 
+Dependencies are managed with [uv](https://docs.astral.sh/uv/) (`pyproject.toml` + `uv.lock`).
+
 ```bash
-# Install dependencies
-pip install PySide6 numpy pyserial pyqtgraph PyOpenGL --break-system-packages
+# Install uv (once)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create .venv and install the locked dependencies
+uv sync
 
 # Launch GUI
-python3 app/main.py
+uv run app/main.py
 
 # Or run a scan from CLI
-python3 scan_lidar.py -d 60 --rpm 0.5 --return-rpm 4 -o scan.pcd
+uv run scan_lidar.py -d 60 --rpm 0.5 --return-rpm 4 -o scan.pcd
 ```
+
+`uv run` syncs the environment automatically, so `uv sync` is optional. To add a dependency, use `uv add <package>` and commit the updated `pyproject.toml` and `uv.lock`.
 
 ## Hardware
 
