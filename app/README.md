@@ -4,14 +4,18 @@ Interface graphique pour le scanner 3D Pandar 40P + moteur SimpleFOC.
 
 ## Lancement
 
+Depuis la racine du dépôt (les dépendances sont gérées par [uv](https://docs.astral.sh/uv/)) :
+
 ```bash
-python3 /home/jason/lidar/app/main.py
+uv run app/main.py
 ```
 
 ## Dependances
 
+Déclarées dans `pyproject.toml` et verrouillées dans `uv.lock` :
+
 ```bash
-pip install PySide6 numpy pyserial pyqtgraph PyOpenGL --break-system-packages
+uv sync
 ```
 
 ## Fenetre principale — Scan
