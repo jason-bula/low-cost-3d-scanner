@@ -1,0 +1,14 @@
+[project]
+name = "low-cost-3d-scanner"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "PySide6",
+    "numpy",
+    "pyqtgraph",
+    "pyopengl",
+    "pyserial",
+]
+
+[project.scripts]
+scanner = "app.main:main"

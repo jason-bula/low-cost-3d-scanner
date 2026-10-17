@@ -418,12 +418,13 @@ def main():
 
     # 5b. Return to start if requested
     if args.return_rpm > 0:
-        scan_angle = args.rpm * 6.0 * args.duration  # degrees traveled
+        # Motor ran for 3s stabilization + full capture duration
+        scan_angle = args.rpm * 6.0 * (args.duration + 3.0)
         return_time = scan_angle / (args.return_rpm * 6.0)
         cmd_ret = f"R-{args.return_rpm}\n"
         print(f"Returning: {cmd_ret.strip()} for {return_time:.1f}s ({scan_angle:.1f}°)")
         ser.write(cmd_ret.encode())
-        time.sleep(return_time + 1.0)  # +1s margin
+        time.sleep(return_time)
         ser.write(b"X\n")
         time.sleep(0.5)
 
